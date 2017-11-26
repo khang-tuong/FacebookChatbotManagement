@@ -1,0 +1,138 @@
+﻿
+
+@model List<FacebookChatbotManagement.Models.ViewModels.IntentViewModel>
+
+<style>
+    .modal-lg {
+        width: 70%;
+    }
+</style>
+
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Tạo dialog</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Tên dialog</label>
+                    <input class="form-control" id="txtName" />
+                    <label>Các intent của dialog này</label>
+                    <div class="col-md-12" style="overflow: hidden" id="groups">
+                        <div class="col-md-12" style="overflow: hidden; margin-top: 10px" id="single-group">
+                            <div class="col-md-4">
+                                <select id="txtIntent" class="form-control">
+                                    @foreach (var intent in Model)
+                                    {
+                                        <option value="@intent.Id">@intent.Name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="number" class="form-control" id="txtStep" placeholder="Bước" />
+                            </div>
+                            <div class="col-md-2">
+                                <input type="number" class="form-control" id="txtException" placeholder="Ngoại lệ" />
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-primary" onclick="addMoreGroup()">Thêm</button>
+                            </div>
+                        </div>
+                        <p></p>
+                    </div>
+                    <p></p>
+                    <button class="btn btn-primary" onclick="save()">Lưu</button>
+                    <button class="btn btn-danger" data-dismiss="modal">Hủy</button>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+<script>
+    var modal;
+    var select2;
+    var totalGroup = 1;
+
+    $(document).ready(() => {
+
+
+        this.modal = $('#myModal').modal();
+        this.modal.show();
+    })
+
+    function addMoreGroup() {
+        let html = `<div class="col-md-12" style="overflow: hidden; margin-top: 10px" id="single-group-${this.totalGroup}">
+                            <div class="col-md-4">
+                                <select id="txtIntent" class="form-control">
+                                    @foreach (var intent in Model)
+                                    {
+                                        <option value="@intent.Id">@intent.Name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="number" class="form-control" id="txtStep" placeholder="Bước" />
+                            </div>
+                            <div class="col-md-2">
+                                <input type="number" class="form-control" id="txtException" placeholder="Ngoại lệ" />
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-primary" onclick="addMoreGroup()">Thêm</button>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-danger" onclick="removeGroup('single-group-${this.totalGroup}')">Xóa</button>
+                            </div>
+                        </div>`;
+        $('#groups').append(html);
+        ++this.totalGroup;
+    }
+
+    function removeGroup(id) {
+        let group = $('#' + id);
+        group.remove();
+    }
+
+
+    function save() {
+        let intents = [];
+        let steps = []
+        let exceptions = []
+
+        let txtIntents = $('select[id=txtIntent]');
+        let txtSteps = $('input[id=txtStep]');
+        let txtExceptions = $('input[id=txtException]');
+
+        for (var i = 0; i < txtIntents.length; i++) {
+            intents.push(txtIntents[i].value);
+        }
+
+        for (var i = 0; i < txtSteps.length; i++) {
+            steps.push(txtSteps[i].value);
+        }
+
+        for (var i = 0; i < txtExceptions.length; i++) {
+            exceptions.push(txtExceptions[i].value);
+        }
+
+        let data = {
+            steps,
+            exceptions,
+            IntentIds: intents,
+            name: $('#txtName').val(),
+        }
+
+        $.ajax({
+            url: '@Url.Action("Create", "Dialog")',
+            type: 'POST',
+            data: data,
+            success: (res) => {
+                location.reload();
+            }
+        })
+    }
+</script>
+
+

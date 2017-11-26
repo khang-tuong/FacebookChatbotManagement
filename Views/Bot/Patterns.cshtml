@@ -1,0 +1,74 @@
+﻿@model List<FacebookChatbotManagement.Models.ViewModels.PatternViewModel>
+@{
+    ViewBag.Title = "Entities";
+}
+
+<h2>Patterns</h2>
+<button class="btn btn-default" onclick="create()">Tạo pattern mới</button>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Tên</th>
+            <th>Cấu trúc câu</th>
+            <th>Chính xác từ đầu</th>
+            <th>Chính xác phần cuối</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var pattern in Model)
+        {
+            <tr>
+                <td>@pattern.Id</td>
+                <td>@pattern.Name</td>
+                <td>@pattern.Regex</td>
+                <td>@pattern.MatchBegin</td>
+                <td>@pattern.MatchEnd</td>
+                <td>
+                    <button class="btn btn-success" id="edit" onclick="edit(@pattern.Id)">Chỉnh sửa</button>
+                    <button class="btn btn-danger">Xóa</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="col-md-12" id="modals">
+
+</div>
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script>
+    $(document).ready(() => {
+    })
+
+    function edit(id) {
+        $.ajax({
+            url: '@Url.Action("Edit", "Pattern")',
+            type: 'GET',
+            data: {
+                id,
+            },
+            success: (data) => {
+                $('#modals').html(data);
+            },
+
+        })
+    }
+
+    function create() {
+        $.ajax({
+            url: '@Url.Action("Create", "Pattern")',
+            type: 'GET',
+            success: (data) => {
+                $('#modals').html(data);
+            },
+
+        })
+    }
+
+</script>
+
+
+

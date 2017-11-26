@@ -1,0 +1,133 @@
+﻿
+
+@model FacebookChatbotManagement.Models.ViewModels.IntentEditViewModel
+
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Tạo intent</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Tên intent</label>
+                    <input class="form-control" id="txtName" value="@Model.Name"/>
+                    <label>Các pattern của intent này</label>
+                    <div class="col-md-12" style="overflow: hidden" id="groups">
+                        @for (int i = 0; i < Model.SelectedPatterns.Count; ++i)
+                        {
+                            <div class="col-md-12" style="overflow: hidden; margin-top: 10px" id="single-group-@i">
+                                <div class="col-md-6">
+                                    <select id="txtPattern" class="form-control">
+                                        @foreach (var p in Model.AllPatterns)
+                                        {
+                                            if (p.Id == Model.SelectedPatterns.ElementAt(i).Key)
+                                            {
+                                                <option value="@p.Id" selected>@p.Name</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@p.Id">@p.Name</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="number" class="form-control" id="txtGroup" placeholder="Nhóm" value="@Model.SelectedPatterns.ElementAt(i).Value"/>
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-primary" onclick="addMoreGroup()">Thêm</button>
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-primary" onclick="removeGroup('single-group-@i')">Xóa</button>
+                                </div>
+                            </div>
+                        }
+                        
+                        <p></p>
+                    </div>
+                    <p></p>
+                    <button class="btn btn-primary" onclick="save()">Lưu</button>
+                    <button class="btn btn-danger" data-dismiss="modal">Hủy</button>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+<script>
+    var modal;
+    var select2;
+    var totalGroup = @Model.SelectedPatterns.Count;
+
+    $(document).ready(() => {
+
+
+        this.modal = $('#myModal').modal();
+        this.modal.show();
+    })
+
+    function addMoreGroup() {
+        let html = `<div class="col-md-12" style="overflow: hidden; margin-top: 10px" id="single-group-${this.totalGroup}">
+                                <div class="col-md-6">
+                                    <select id="txtPattern" class="form-control">
+                                        @foreach (var p in Model.AllPatterns)
+                                        {
+                                            <option value="@p.Id">@p.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="number" class="form-control" id="txtGroup" placeholder="Nhóm" />
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-primary" onclick="addMoreGroup()">Thêm</button>
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-primary" onclick="removeGroup('single-group-${this.totalGroup}')">Xóa</button>
+                                </div>
+                            </div>`;
+        $('#groups').append(html);
+        ++this.totalGroup;
+    }
+
+    function removeGroup(id) {
+        let group = $('#' + id);
+        group.remove();
+    }
+
+    function save() {
+        let patterns = [];
+        let groups = []
+
+        let txtPatterns = $('select[id=txtPattern]');
+        let txtGroups = $('input[id=txtGroup]');
+
+        for (var i = 0; i < txtPatterns.length; i++) {
+            patterns.push(txtPatterns[i].value);
+        }
+
+        for (var i = 0; i < txtGroups.length; i++) {
+            groups.push(txtGroups[i].value);
+        }
+
+        let data = {
+            id: '@Model.Id',
+            patterns,
+            groups,
+            name: $('#txtName').val(),
+        }
+
+        $.ajax({
+            url: '@Url.Action("Update", "Intent")',
+            type: 'POST',
+            data: data,
+            success: (res) => {
+                location.reload();
+            }
+        })
+    }
+</script>
+
+

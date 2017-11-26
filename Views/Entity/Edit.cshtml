@@ -1,0 +1,49 @@
+﻿@model FacebookChatbotManagement.Models.Entities.Entity
+
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Chỉnh sửa @Model.Name</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Tên</label>
+                    <input class="form-control" value="@Model.Name" id="txtName"/><br/>
+                    <label>Từ vựng</label>
+                    <input class="form-control" value="@Model.Words" id="txtWords"/>
+                    <button class="btn btn-primary" onclick="update()">Lưu</button>
+                    <button class="btn btn-danger" data-dismiss="modal">Hủy</button>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    var modal;
+
+    $(document).ready(() => {
+        this.modal = $('#myModal').modal();
+        this.modal.show();
+    })
+
+    function update() {
+        let data = {
+            id: @Model.Id,
+            name: $('#txtName').val(),
+            words: $('#txtWords').val(),
+        }
+
+        $.ajax({
+            url: '@Url.Action("Update", "Entity")',
+            type: 'POST',
+            data: data,
+            success: (res) => {
+                location.reload();
+            }
+        })
+    }
+</script>

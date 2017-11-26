@@ -1,0 +1,28 @@
+﻿
+@{
+    ViewBag.Title = "Experiment";
+}
+
+<h2>Thử nghiệm</h2>
+<p></p>
+<label>Nhập input</label>
+<input type="text" class="form-control" id="txtInput" />
+<button class="btn btn-primary" onclick="analyze()">Phân tích</button>
+<textarea class="form-control" id="response" style="height: 300px"></textarea>
+<script>
+    function analyze() {
+        let data = {
+            input: $('#txtInput').val(),
+        };
+
+        $.ajax({
+            url: '@Url.Action("Analyze", "Experiment")',
+            type: 'GET',
+            data: data,
+            success: (res) => {
+                let string = JSON.stringify(res, null, 8);
+                $('#response').html(string);
+            }
+        });
+    }
+</script>

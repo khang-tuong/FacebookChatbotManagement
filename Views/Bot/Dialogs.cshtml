@@ -1,0 +1,68 @@
+﻿@model List<FacebookChatbotManagement.Models.ViewModels.DialogViewModel>
+@{
+    ViewBag.Title = "Entities";
+}
+
+<h2>Dialog</h2>
+<button class="btn btn-default" onclick="create()">Tạo dialog mới</button>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Tên</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var dialog in Model)
+        {
+            <tr>
+                <td>@dialog.Id</td>
+                <td>@dialog.Name</td>
+                <td>
+                    <button class="btn btn-success" id="edit" onclick="edit(@dialog.Id)">Chỉnh sửa</button>
+                    <button class="btn btn-danger">Xóa</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="col-md-12" id="modals">
+
+</div>
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script>
+    $(document).ready(() => {
+    })
+
+    function edit(id) {
+        $.ajax({
+            url: '@Url.Action("Edit", "Dialog")',
+            type: 'GET',
+            data: {
+                id,
+            },
+            success: (data) => {
+                $('#modals').html(data);
+            },
+
+        })
+    }
+
+    function create() {
+        $.ajax({
+            url: '@Url.Action("Create", "Dialog")',
+            type: 'GET',
+            success: (data) => {
+                $('#modals').html(data);
+            },
+
+        })
+    }
+
+</script>
+
+
+

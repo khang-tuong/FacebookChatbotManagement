@@ -1,0 +1,69 @@
+﻿@model List<FacebookChatbotManagement.Models.Entities.Entity>
+@{
+    ViewBag.Title = "Entities";
+}
+
+<h2>Entities</h2>
+<button class="btn btn-default" onclick="create()">Tạo entity mới</button>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Tên</th>
+            <th>Từ</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var entity in Model)
+        {
+            <tr>
+                <td>@entity.Id</td>
+                <td>@entity.Name</td>
+                <td>@entity.Words</td>
+                <td>
+                    <button class="btn btn-success" id="edit" onclick="edit(@entity.Id)">Chỉnh sửa</button>
+                    <button class="btn btn-danger">Xóa</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="col-md-12" id="modals">
+
+</div>
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script>
+    $(document).ready(() => {
+    })
+
+    function edit(id) {
+        $.ajax({
+            url: '@Url.Action("Edit", "Entity")',
+            type: 'GET',
+            data: {
+                id,
+            },
+            success: (data) => {
+                $('#modals').html(data);
+            },
+
+        })
+    }
+
+    function create() {
+        $.ajax({
+            url: '@Url.Action("Create", "Entity")',
+            type: 'GET',
+            success: (data) => {
+                $('#modals').html(data);
+            },
+
+        })
+    }
+</script>
+
+
+
