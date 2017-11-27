@@ -24,6 +24,7 @@ namespace FacebookChatbotManagement.Models.Services
             string specialValues = ""; //when the entity simply just want some words
             foreach (var pattern in patterns)
             {
+                specialValues = "";
                 Dictionary<string, string> matchesTmp = new Dictionary<string, string>();
                 inputTmp = input.Trim();
                 List<PatternEntityMapping> pems = pattern.PatternEntityMappings.Where(q => q.Active == true).OrderBy(q => q.Position).ToList();
@@ -36,13 +37,17 @@ namespace FacebookChatbotManagement.Models.Services
                     }
                     else
                     {
-                        if (i == pems.Count - 1 && pattern.MatchEnd)
+                        if (pattern.MatchBegin && pattern.MatchEnd)
                         {
-                            regex = new Regex(@"(?:^|\W)" + pems[i].Entity.Words + @"$(?:$|\W)", RegexOptions.IgnoreCase);
+                            regex = new Regex(@"(?:^|\W)^(" + pems[i].Entity.Words + @")$(?:$|\W)", RegexOptions.IgnoreCase);
+                        }
+                        else if (i == pems.Count - 1 && pattern.MatchEnd)
+                        {
+                            regex = new Regex(@"(?:^|\W)(" + pems[i].Entity.Words + @")$(?:$|\W)", RegexOptions.IgnoreCase);
                         }
                         else if (specialValues == "")
                         {
-                            regex = new Regex(@"(?:^|\W)^" + pems[i].Entity.Words + @"(?:$|\W)", RegexOptions.IgnoreCase);
+                            regex = new Regex(@"(?:^|\W)^(" + pems[i].Entity.Words + @")(?:$|\W)", RegexOptions.IgnoreCase);
                         }
                         else
                         {
@@ -59,10 +64,11 @@ namespace FacebookChatbotManagement.Models.Services
                             }
                             if (i == pems.Count - 1)
                             {
-                                if (pattern.PatternEntityMappings.Count > maxElements)
+                                if (matchesTmp.Count > maxElements)
                                 {
                                     matchPattern = pattern;
                                     matches = matchesTmp;
+                                    maxElements = matchesTmp.Count;
                                     if (result.Index + result.Value.Trim().Length + 1 < inputTmp.Length)
                                     {
                                         specialValues = inputTmp.Substring(result.Index + result.Value.Trim().Length + 1);
@@ -87,14 +93,17 @@ namespace FacebookChatbotManagement.Models.Services
                 }
                 if (specialValues != "")
                 {
-                    if (matches == null && pattern.PatternEntityMappings.Count > maxElements)
+                    if (matches == null && matchesTmp.Count > maxElements)
                     {
                         matches = matchesTmp;
                         matchPattern = pattern;
                         matches.Add("Cụm từ", specialValues.Trim());
-                    } else if (matches!= null && !matches.ContainsKey("Cụm từ"))
+                        maxElements = matchesTmp.Count;
+                    } else if (matches!= null && !matches.ContainsKey("Cụm từ") && matchesTmp.Count > maxElements)
                     {
                         matches.Add("Cụm từ", specialValues.Trim());
+                        matchPattern = pattern;
+                        maxElements = matchesTmp.Count;
                     }
                     specialValues = "";
                 }
