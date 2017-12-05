@@ -22,17 +22,17 @@ namespace FacebookChatbotManagement.Models.Services
 
         public DialogEditViewModel GetEditViewModel(int dialogId)
         {
-            DialogIntentMappingService dialogIntentMappingService = new DialogIntentMappingService();
             Dialog dialog = this.FirstOrDefault(q => q.Id == dialogId && q.Active == true);
             DialogEditViewModel model = new DialogEditViewModel();
+            IntentService intentService = new IntentService();
             if (dialog != null)
             {
                 model.Id = dialog.Id;
                 model.Name = dialog.Name;
-                model.Steps = dialogIntentMappingService.Get(q => q.DialogId == dialog.Id).Select(q => q.Step).ToList();
-                model.Exceptions = dialogIntentMappingService.Get(q => q.DialogId == dialog.Id).Select(q => q.Exception).ToList();
-                model.AllIntents = new IntentService().GetAll();
-                model.SelectedIntents = dialog.DialogIntentMappings.Select(z => new IntentViewModel() { Id = z.IntentId, Name = z.Intent.Name }).ToList();
+                model.Steps = dialog.Intents.Select(q => q.Step.Value).ToList();
+                model.Exceptions = dialog.Intents.Select(q => q.Exception.Value).ToList();
+                model.AllIntents = intentService.GetAllForEditingDialog(dialogId);
+                model.SelectedIntents = model.AllIntents.Where(z => z.DialogId == dialogId).Select(z => new IntentViewModel() { Id = z.Id, Name = z.Name }).ToList();
             }
             return model;
         }  
@@ -47,18 +47,16 @@ namespace FacebookChatbotManagement.Models.Services
                     Name = model.Name
                 });
 
-                DialogIntentMappingService dialogIntentMappingService = new DialogIntentMappingService();
-                for (int i = 0; i < model.IntentIds.Length; i++)
+                IntentService intentService = new IntentService();
+
+                foreach (var intentId in model.IntentIds)
                 {
-                    dialogIntentMappingService.Add(new DialogIntentMapping()
-                    {
-                        Active = true,
-                        DialogId = dialog.Id,
-                        Exception = model.Exceptions[i],
-                        Step = model.Steps[i],
-                        IntentId = model.IntentIds[i]
-                    });
+                    Intent intent = intentService.FirstOrDefault(q => q.Id == intentId);
+                    intent.DialogId = dialog.Id;
+                    intent.Active = true;
                 }
+
+                intentService.SaveChanges();
 
                 this.DbSet.SaveChanges();
             }
@@ -80,35 +78,28 @@ namespace FacebookChatbotManagement.Models.Services
                     dialog.Name = model.Name;
                     this.DbSet.SaveChanges();
 
-                    DialogIntentMappingService dimService = new DialogIntentMappingService();
-                    IEnumerable<DialogIntentMapping> dialogIntentMapping = dimService.Get(q => q.DialogId == model.Id);
-                    foreach (var item in dialogIntentMapping)
+                    IntentService intentService = new IntentService();
+                    List<Intent> intents = intentService.Get(q => q.DialogId == model.Id).ToList();
+                    foreach (var intent in intents)
                     {
-                        item.Active = false;
+                        intent.Active = false;
+                        intent.DialogId = null;
                     }
 
-                    for (int i = 0; i < model.IntentIds.Length; ++i)
+                    if (model.IntentIds != null)
                     {
-                        var pem = dialogIntentMapping.FirstOrDefault(q => q.IntentId == model.IntentIds[i]);
-                        if (pem != null)
+                        for (var i = 0; i < model.IntentIds.Length; ++i)
                         {
-                            pem.Active = true;
-                            pem.Step = model.Steps[i];
-                            pem.Exception = model.Exceptions[i];
+                            Intent intent = intentService.FirstOrDefault(q => q.Id == model.IntentIds[i]);
+                            intent.DialogId = model.Id;
+                            intent.Step = model.Steps[i];
+                            intent.Exception = model.Exceptions[i];
+                            intent.Active = true;
                         }
-                        else
-                        {
-                            dimService.Add(new DialogIntentMapping()
-                            {
-                                Active = true,
-                                DialogId = model.Id,
-                                Exception = model.Exceptions[i],
-                                IntentId = model.IntentIds[i],
-                                Step = model.Steps[i],
-                            });
-                        }
-                    }
-                    dimService.SaveChanges();
+                    } 
+
+                    intentService.SaveChanges();
+
                 }
                 catch (Exception e)
                 {
@@ -116,6 +107,16 @@ namespace FacebookChatbotManagement.Models.Services
                     throw e;
                 }
                 
+            }
+        }
+
+        public void Delete(int dialogId)
+        {
+            var dialog = this.FirstOrDefault(q => q.Id == dialogId);
+            if (dialog != null)
+            {
+                dialog.Active = false;
+                this.SaveChanges();
             }
         }
     }

@@ -61,7 +61,6 @@
         $("select").on("select2:select", function (evt) {
             var element = evt.params.data.element;
             var $element = $(element);
-
             window.setTimeout(function () {
                 if ($("select").find(":selected").length > 1) {
                     var $second = $("select").find(":selected").eq(-2);
@@ -75,6 +74,7 @@
 
                 $("select").trigger("change");
             }, 1);
+            $("select").append(`<option value=${element.value}>${element.innerText}</option>`);
         });
 
         $("select").on("select2:unselect", function (evt) {

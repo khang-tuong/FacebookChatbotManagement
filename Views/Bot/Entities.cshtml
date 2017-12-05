@@ -23,7 +23,7 @@
                 <td>@entity.Words</td>
                 <td>
                     <button class="btn btn-success" id="edit" onclick="edit(@entity.Id)">Chỉnh sửa</button>
-                    <button class="btn btn-danger">Xóa</button>
+                    <button class="btn btn-danger" onclick="remove(@entity.Id)">Xóa</button>
                 </td>
             </tr>
         }
@@ -53,16 +53,31 @@
         })
     }
 
+    function remove(id) {
+        let data = {
+            id: id
+        };
+
+        $.ajax({
+            url: '@Url.Action("Delete", "Entity")',
+            type: 'POST',
+            data: data,
+            success: (res) => location.reload()
+        });
+    }
+
     function create() {
         $.ajax({
             url: '@Url.Action("Create", "Entity")',
             type: 'GET',
             success: (data) => {
                 $('#modals').html(data);
-            },
+            }
 
         })
     }
+
+
 </script>
 
 

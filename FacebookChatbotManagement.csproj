@@ -182,9 +182,6 @@
     <Compile Include="Models\Entities\Dialog.cs">
       <DependentUpon>BotModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\Entities\DialogIntentMapping.cs">
-      <DependentUpon>BotModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\Entities\DialogStep.cs">
       <DependentUpon>BotModel.tt</DependentUpon>
     </Compile>
@@ -192,9 +189,6 @@
       <DependentUpon>BotModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Entities\Intent.cs">
-      <DependentUpon>BotModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Entities\IntentPatternMapping.cs">
       <DependentUpon>BotModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Entities\Pattern.cs">
@@ -206,11 +200,9 @@
     <Compile Include="Models\Enums.cs" />
     <Compile Include="Models\Redis\RedisConnectionHelper.cs" />
     <Compile Include="Models\ResponseMessage.cs" />
-    <Compile Include="Models\Services\DialogIntentMappingService.cs" />
     <Compile Include="Models\Services\DialogService.cs" />
     <Compile Include="Models\Services\EntityService.cs" />
     <Compile Include="Models\Services\ExperimentService.cs" />
-    <Compile Include="Models\Services\IntentPatternMappingService.cs" />
     <Compile Include="Models\Services\IntentService.cs" />
     <Compile Include="Models\Services\PatternEntityMappingService.cs" />
     <Compile Include="Models\Services\PatternService.cs" />

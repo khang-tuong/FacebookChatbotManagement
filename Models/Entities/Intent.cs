@@ -17,17 +17,18 @@ namespace FacebookChatbotManagement.Models.Entities
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Intent()
         {
-            this.DialogIntentMappings = new HashSet<DialogIntentMapping>();
-            this.IntentPatternMappings = new HashSet<IntentPatternMapping>();
+            this.Patterns = new HashSet<Pattern>();
         }
     
         public int Id { get; set; }
         public string Name { get; set; }
         public bool Active { get; set; }
+        public Nullable<int> Step { get; set; }
+        public Nullable<int> Exception { get; set; }
+        public Nullable<int> DialogId { get; set; }
     
+        public virtual Dialog Dialog { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<DialogIntentMapping> DialogIntentMappings { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<IntentPatternMapping> IntentPatternMappings { get; set; }
+        public virtual ICollection<Pattern> Patterns { get; set; }
     }
 }

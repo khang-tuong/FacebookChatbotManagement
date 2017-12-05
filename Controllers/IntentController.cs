@@ -26,7 +26,7 @@ namespace FacebookChatbotManagement.Controllers
         public ActionResult Create()
         {
             IntentCreateViewModel model = new IntentCreateViewModel();
-            model.Patterns = new PatternService().GetAll();
+            model.Patterns = new PatternService().GetAllForCreating();
             return PartialView(model);
         }
 
@@ -60,6 +60,15 @@ namespace FacebookChatbotManagement.Controllers
             {
                 return Json(new ResponseMessage() { Message = "Đã có lỗi xảy ra", Success = false });
             }
+        }
+
+        [HttpPost]
+        public JsonResult Delete(int id)
+        {
+            IntentService intentService = new IntentService();
+            intentService.Delete(id);
+            return Json(new ResponseMessage() { Message = "Đã tạo thành công", Success = true });
+
         }
     }
 }

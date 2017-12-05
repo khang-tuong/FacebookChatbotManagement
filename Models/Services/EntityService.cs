@@ -27,7 +27,7 @@ namespace FacebookChatbotManagement.Models.Services
 
         public List<Entity> GetAll()
         {
-            return this.DbSet.Entities.ToList();
+            return this.Get(q => q.Active == true).ToList();
         }
 
         public void Update(int id, string name, string words)

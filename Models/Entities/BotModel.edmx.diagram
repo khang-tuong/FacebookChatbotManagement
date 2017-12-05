@@ -5,19 +5,15 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="4c0bf603f88347afa3d9e17b878fd92d" Name="Diagram1">
-        <EntityTypeShape EntityType="ChatbotModel.Dialog" Width="1.5" PointX="0.75" PointY="10.625" />
-        <EntityTypeShape EntityType="ChatbotModel.DialogIntentMapping" Width="1.5" PointX="3" PointY="0.75" />
-        <EntityTypeShape EntityType="ChatbotModel.DialogStep" Width="1.5" PointX="2.75" PointY="10.875" />
-        <EntityTypeShape EntityType="ChatbotModel.Entity" Width="1.5" PointX="3.75" PointY="4" />
-        <EntityTypeShape EntityType="ChatbotModel.Intent" Width="1.5" PointX="0.75" PointY="4" />
-        <EntityTypeShape EntityType="ChatbotModel.IntentPatternMapping" Width="1.5" PointX="3" PointY="6.875" />
-        <AssociationConnector Association="ChatbotModel.FK_DialogIntentMapping_Dialog" />
-        <AssociationConnector Association="ChatbotModel.FK_DialogIntentMapping_Intent" />
-        <AssociationConnector Association="ChatbotModel.FK_IntentPatternMapping_Intent" />
-        <EntityTypeShape EntityType="ChatbotModel.PatternEntityMapping" Width="1.5" PointX="6" PointY="5.25" />
+        <EntityTypeShape EntityType="ChatbotModel.Dialog" Width="1.5" PointX="0.75" PointY="1.5" />
+        <EntityTypeShape EntityType="ChatbotModel.DialogStep" Width="1.5" PointX="0.75" PointY="4.75" />
+        <EntityTypeShape EntityType="ChatbotModel.Entity" Width="1.5" PointX="5.25" PointY="5.375" />
+        <EntityTypeShape EntityType="ChatbotModel.Intent" Width="1.5" PointX="3" PointY="1" />
+        <EntityTypeShape EntityType="ChatbotModel.Pattern" Width="1.5" PointX="5.25" PointY="1" />
+        <EntityTypeShape EntityType="ChatbotModel.PatternEntityMapping" Width="1.5" PointX="7.5" PointY="1.125" />
+        <AssociationConnector Association="ChatbotModel.FK_Intent_Dialog" />
         <AssociationConnector Association="ChatbotModel.FK_PatternEntityMapping_Entity" />
-        <EntityTypeShape EntityType="ChatbotModel.Pattern" Width="1.5" PointX="0.75" PointY="7.125" />
-        <AssociationConnector Association="ChatbotModel.FK_IntentPatternMapping_Pattern" />
+        <AssociationConnector Association="ChatbotModel.FK_Pattern_Intent" />
         <AssociationConnector Association="ChatbotModel.FK_PatternEntityMapping_Pattern" />
       </Diagram>
     </edmx:Diagrams>

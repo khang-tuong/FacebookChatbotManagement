@@ -23,6 +23,32 @@ namespace FacebookChatbotManagement.Models.Services
                 }).ToList();
         }
 
+        public List<IntentViewModel> GetAllForCreatingDialog()
+        {
+            return this.Get(q => (q.Active == true && !q.DialogId.HasValue) || q.Active == false)
+                .Select(q => new IntentViewModel()
+                {
+                    Id = q.Id,
+                    Name = q.Name,
+                    DialogId = 0,
+                    Exception = 0,
+                    Step = 0,
+                }).ToList();
+        }
+
+        public List<IntentViewModel> GetAllForEditingDialog(int dialogId)
+        {
+            return this.Get(q => (q.Active == true && (!q.DialogId.HasValue || q.DialogId == dialogId)) || q.Active == false)
+                .Select(q => new IntentViewModel()
+                {
+                    Id = q.Id,
+                    Name = q.Name,
+                    DialogId = q.DialogId ?? 0,
+                    Exception = q.Exception ?? 0,
+                    Step = q.Step ?? 0,
+                }).ToList();
+        }
+
 
         public Intent Create(string name, int[] patterns, int[] groups)
         {
@@ -32,18 +58,16 @@ namespace FacebookChatbotManagement.Models.Services
                 Name = name,
             });
 
-            IntentPatternMappingService service = new IntentPatternMappingService();
-            for (int i = 0; i < patterns.Length; ++i)
-            {
-                service.Add(new IntentPatternMapping() {
-                    Active = true,
-                    IntentId = intent.Id,
-                    PatternId = patterns[i],
-                    Group = groups[i]
-                });
-            }
+            PatternService patternService = new PatternService();
 
-            this.DbSet.SaveChanges();
+            foreach (var patternId in patterns)
+            {
+                var pattern = patternService.FirstOrDefault(q => q.Id == patternId && q.Active == true);
+                pattern.IntentId = intent.Id;
+            }
+            patternService.SaveChanges();
+
+            this.SaveChanges();
             return intent;
         }
 
@@ -55,11 +79,11 @@ namespace FacebookChatbotManagement.Models.Services
                 IntentEditViewModel model = new IntentEditViewModel();
                 model.Id = intent.Id;
                 model.Name = intent.Name;
-                model.AllPatterns = new PatternService().GetAll();
-                foreach (var map in intent.IntentPatternMappings)
+                model.AllPatterns = new PatternService().GetAllForEditingIntent(intentId);
+                foreach (var pattern in model.AllPatterns)
                 {
-                    if (map.Active)
-                        model.SelectedPatterns.Add(map.PatternId, map.Group);
+                    if (pattern.IntentId == intent.Id)
+                        model.SelectedPatterns.Add(pattern.Id, pattern.Group);
                 }
                 return model;
             }
@@ -77,34 +101,27 @@ namespace FacebookChatbotManagement.Models.Services
                 }
                 this.DbSet.SaveChanges();
 
-                IntentPatternMappingService ipmService = new IntentPatternMappingService();
-                IEnumerable<IntentPatternMapping> intentPatternMapping = ipmService.Get(q => q.IntentId == id);
-                foreach (var item in intentPatternMapping)
+                PatternService patternService = new PatternService();
+                List<Pattern> ps = patternService.Get(q => q.IntentId == id).ToList();
+                foreach (var p in ps)
                 {
-                    item.Active = false;
+                    p.Active = false;
+                    p.IntentId = null;
                 }
 
-                for (int i = 0; i < patterns.Length; ++i)
+                if (patterns != null)
                 {
-                    int p = patterns[i];
-                    var pem = intentPatternMapping.FirstOrDefault(q => q.PatternId == p);
-                    if (pem != null)
+                    for (var i =0; i < patterns.Length; ++i)
                     {
-                        pem.Active = true;
-                        pem.Group = groups[i];
-                    }
-                    else
-                    {
-                        ipmService.Add(new IntentPatternMapping()
-                        {
-                            Active = true,
-                            PatternId = patterns[i],
-                            Group = groups[i],
-                            IntentId = id,
-                        });
+                        Pattern pattern = patternService.FirstOrDefault(q => q.Id == patterns[i]);
+                        pattern.IntentId = id;
+                        pattern.Group = groups[i];
+                        pattern.Active = true;
                     }
                 }
-                ipmService.SaveChanges();
+
+
+                patternService.SaveChanges();
             }
             catch (Exception e)
             {
@@ -121,15 +138,15 @@ namespace FacebookChatbotManagement.Models.Services
                 .Select(q => new IntentRedisViewModel()
                 {
                     Id = q.Id,
-                    DialogId = q.DialogIntentMappings.ElementAt(0).DialogId,
-                    Exception = q.DialogIntentMappings.ElementAt(0).Exception,
-                    Step = q.DialogIntentMappings.ElementAt(0).Step,
-                    Patterns = q.IntentPatternMappings.Where(z => z.Active == true).Select(z => new PatternRedisViewModel() {
-                        Id = z.PatternId,
-                        MatchBegin = z.Pattern.MatchBegin,
-                        MatchEnd = z.Pattern.MatchEnd,
-                        Group = z.Group,
-                        Entities = z.Pattern.PatternEntityMappings.Where(x => x.Active == true).OrderBy(x => x.Position).Select(x => new EntityRedisViewModel() {
+                    DialogId = q.DialogId ?? 0,
+                    Exception = q.Exception ?? -1,
+                    Step = q.Step ?? -1,
+                    Patterns = q.Patterns.Where(z => z.Active == true).Select(z => new PatternRedisViewModel() {
+                        Id = z.Id,
+                        MatchBegin = z.MatchBegin,
+                        MatchEnd = z.MatchEnd,
+                        Group = z.Group ?? 0,
+                        Entities = z.PatternEntityMappings.Where(x => x.Active == true).OrderBy(x => x.Position).Select(x => new EntityRedisViewModel() {
                             Id = x.EntityId.Value,
                             Words = x.Entity.Words
                         }).ToList(),
@@ -139,6 +156,15 @@ namespace FacebookChatbotManagement.Models.Services
 
 
             return intents;
+        }
+
+        public void Delete(int intentId)
+        {
+            var intent = this.FirstOrDefault(q => q.Id == intentId);
+            if (intent != null) {
+                intent.Active = false;
+                this.SaveChanges();
+            }
         }
     }
 }

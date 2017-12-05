@@ -17,7 +17,7 @@ namespace FacebookChatbotManagement.Models.Entities
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Dialog()
         {
-            this.DialogIntentMappings = new HashSet<DialogIntentMapping>();
+            this.Intents = new HashSet<Intent>();
         }
     
         public int Id { get; set; }
@@ -25,6 +25,6 @@ namespace FacebookChatbotManagement.Models.Entities
         public bool Active { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<DialogIntentMapping> DialogIntentMappings { get; set; }
+        public virtual ICollection<Intent> Intents { get; set; }
     }
 }

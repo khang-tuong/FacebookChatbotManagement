@@ -16,43 +16,73 @@
                 <div class="form-group">
                     <label>Tên dialog</label>
                     <input class="form-control" id="txtName" value="@Model.Name" />
-                    <label>Các intent của dialog này</label>
-                    <div class="col-md-12" style="overflow: hidden" id="groups">
-                        @for (int i = 0; i < Model.SelectedIntents.Count; ++i)
-                        {
-                            <div class="col-md-12" style="overflow: hidden; margin-top: 10px" id="single-group-@i">
+                    @if (Model.SelectedIntents.Count == 0)
+                    {
+                        <label>Dialog này chưa có intent. Hãy thêm intent</label>
+                        <div class="col-md-12" style="overflow: hidden" id="groups">
+                            <div class="col-md-12" style="overflow: hidden; margin-top: 10px" id="single-group">
                                 <div class="col-md-4">
                                     <select id="txtIntent" class="form-control">
-                                        @foreach (var p in Model.AllIntents)
+                                        @foreach (var intent in Model.AllIntents)
                                         {
-                                            if (p.Id == Model.SelectedIntents[i].Id)
-                                            {
-                                                <option value="@p.Id" selected>@p.Name</option>
-                                            }
-                                            else
-                                            {
-                                                <option value="@p.Id">@p.Name</option>
-                                            }
+                                            <option value="@intent.Id">@intent.Name</option>
                                         }
                                     </select>
                                 </div>
                                 <div class="col-md-2">
-                                    <input type="number" class="form-control" id="txtStep" placeholder="Bước" value="@Model.Steps[i]" />
+                                    <input type="number" class="form-control" id="txtStep" placeholder="Bước" />
                                 </div>
                                 <div class="col-md-2">
-                                    <input type="number" class="form-control" id="txtException" placeholder="Ngoại lệ" value="@Model.Exceptions[i]" />
+                                    <input type="number" class="form-control" id="txtException" placeholder="Ngoại lệ" />
                                 </div>
                                 <div class="col-md-2">
                                     <button class="btn btn-primary" onclick="addMoreGroup()">Thêm</button>
                                 </div>
-                                <div class="col-md-2">
-                                    <button class="btn btn-primary" onclick="removeGroup('single-group-@i')">Xóa</button>
-                                </div>
                             </div>
-                        }
+                            <p></p>
+                        </div>
+                    }
+                    else
+                    {
+                        <label>Các intent của dialog này</label>
+                        <div class="col-md-12" style="overflow: hidden" id="groups">
+                            @for (int i = 0; i < Model.SelectedIntents.Count; ++i)
+                            {
+                                <div class="col-md-12" style="overflow: hidden; margin-top: 10px" id="single-group-@i">
+                                    <div class="col-md-4">
+                                        <select id="txtIntent" class="form-control">
+                                            @foreach (var p in Model.AllIntents)
+                                            {
+                                                if (p.Id == Model.SelectedIntents[i].Id)
+                                                {
+                                                    <option value="@p.Id" selected>@p.Name</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@p.Id">@p.Name</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="number" class="form-control" id="txtStep" placeholder="Bước" value="@Model.Steps[i]" />
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="number" class="form-control" id="txtException" placeholder="Ngoại lệ" value="@Model.Exceptions[i]" />
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button class="btn btn-primary" onclick="addMoreGroup()">Thêm</button>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button class="btn btn-primary" onclick="removeGroup('single-group-@i')">Xóa</button>
+                                    </div>
+                                </div>
+                            }
 
-                        <p></p>
-                    </div>
+                            <p></p>
+                        </div>
+                    }
+                    
                     <p></p>
                     <button class="btn btn-primary" onclick="save()">Lưu</button>
                     <button class="btn btn-danger" data-dismiss="modal">Hủy</button>

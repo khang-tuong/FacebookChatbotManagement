@@ -21,7 +21,7 @@
                 <td>@intent.Name</td>
                 <td>
                     <button class="btn btn-success" id="edit" onclick="edit(@intent.Id)">Chỉnh sửa</button>
-                    <button class="btn btn-danger">Xóa</button>
+                    <button class="btn btn-danger" onclick="remove(@intent.Id)">Xóa</button>
                 </td>
             </tr>
         }
@@ -60,6 +60,19 @@
             },
 
         })
+    }
+
+    function remove(id) {
+        let data = {
+            id,
+        };
+
+        $.ajax({
+            url: '@Url.Action("Delete", "Intent")',
+            type: 'POST',
+            data: data,
+            success: (res) => location.reload(),
+        });
     }
 
 </script>

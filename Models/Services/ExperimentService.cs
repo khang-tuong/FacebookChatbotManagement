@@ -25,6 +25,7 @@ namespace FacebookChatbotManagement.Models.Services
             foreach (var pattern in patterns)
             {
                 specialValues = "";
+                bool hasUnknwonPhrase = false;
                 Dictionary<string, string> matchesTmp = new Dictionary<string, string>();
                 inputTmp = input.Trim();
                 List<PatternEntityMapping> pems = pattern.PatternEntityMappings.Where(q => q.Active == true).OrderBy(q => q.Position).ToList();
@@ -34,10 +35,11 @@ namespace FacebookChatbotManagement.Models.Services
                     if (pems[i].Entity.Words == @".*?")
                     {
                         specialValues = inputTmp;
+                        hasUnknwonPhrase = true;
                     }
                     else
                     {
-                        if (pattern.MatchBegin && pattern.MatchEnd)
+                        if (pattern.MatchBegin && pattern.MatchEnd && pems.Count == 1)
                         {
                             regex = new Regex(@"(?:^|\W)^(" + pems[i].Entity.Words + @")$(?:$|\W)", RegexOptions.IgnoreCase);
                         }
@@ -56,7 +58,15 @@ namespace FacebookChatbotManagement.Models.Services
                         Match result = regex.Match(inputTmp);
                         if (result.Success)
                         {
-                            matchesTmp.Add(pems[i].Entity.Name, result.Value);
+                            if (matchesTmp.ContainsKey(pems[i].Entity.Name))
+                            {
+                                string value = matchesTmp[pems[i].Entity.Name];
+                                matchesTmp[pems[i].Entity.Name] = value + ";" + result.Value;
+                            } else
+                            {
+                                matchesTmp.Add(pems[i].Entity.Name, result.Value);
+
+                            }
                             if (specialValues != "")
                             {
                                 matchesTmp.Add("Cụm từ", specialValues.Substring(0, specialValues.Length - result.Length).Trim());
@@ -64,11 +74,11 @@ namespace FacebookChatbotManagement.Models.Services
                             }
                             if (i == pems.Count - 1)
                             {
-                                if (matchesTmp.Count > maxElements)
+                                if ((!hasUnknwonPhrase && matchesTmp.Count > maxElements) || (hasUnknwonPhrase && matchesTmp.Count - 1 > maxElements))
                                 {
                                     matchPattern = pattern;
                                     matches = matchesTmp;
-                                    maxElements = matchesTmp.Count;
+                                    maxElements = hasUnknwonPhrase ? matchesTmp.Count - 1 : matchesTmp.Count;
                                     if (result.Index + result.Value.Trim().Length + 1 < inputTmp.Length)
                                     {
                                         specialValues = inputTmp.Substring(result.Index + result.Value.Trim().Length + 1);
@@ -93,17 +103,17 @@ namespace FacebookChatbotManagement.Models.Services
                 }
                 if (specialValues != "")
                 {
-                    if (matches == null && matchesTmp.Count > maxElements)
+                    if (matches == null && ((!hasUnknwonPhrase && matchesTmp.Count > maxElements) || (hasUnknwonPhrase && matchesTmp.Count - 1 > maxElements)))
                     {
                         matches = matchesTmp;
                         matchPattern = pattern;
                         matches.Add("Cụm từ", specialValues.Trim());
-                        maxElements = matchesTmp.Count;
-                    } else if (matches!= null && !matches.ContainsKey("Cụm từ") && matchesTmp.Count > maxElements)
+                        maxElements = hasUnknwonPhrase ? matchesTmp.Count - 1 : matchesTmp.Count;
+                    } else if (matches!= null && !matches.ContainsKey("Cụm từ") && ((!hasUnknwonPhrase && matchesTmp.Count > maxElements) || (hasUnknwonPhrase && matchesTmp.Count - 1 > maxElements)))
                     {
                         matches.Add("Cụm từ", specialValues.Trim());
                         matchPattern = pattern;
-                        maxElements = matchesTmp.Count;
+                        maxElements = hasUnknwonPhrase ? matchesTmp.Count - 1 : matchesTmp.Count;
                     }
                     specialValues = "";
                 }
@@ -114,8 +124,8 @@ namespace FacebookChatbotManagement.Models.Services
             ExperimentResultViewModel model = new ExperimentResultViewModel();
             if (matchPattern != null)
             {
-                model.IntentId = matchPattern.IntentPatternMappings.ToList()[0].IntentId;
-                model.Group = matchPattern.IntentPatternMappings.ToList()[0].Group;
+                model.IntentId = matchPattern.IntentId ?? 0;
+                model.Group = matchPattern.Group ?? 0;
                 model.Matches = matches;
             }
 

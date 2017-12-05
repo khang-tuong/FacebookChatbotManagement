@@ -17,8 +17,6 @@ namespace FacebookChatbotManagement.Models.Entities
         public int Id { get; set; }
         public int PatternId { get; set; }
         public Nullable<int> EntityId { get; set; }
-        public string Text { get; set; }
-        public int Type { get; set; }
         public int Position { get; set; }
         public bool Active { get; set; }
     

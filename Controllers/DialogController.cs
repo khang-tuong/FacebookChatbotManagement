@@ -25,7 +25,7 @@ namespace FacebookChatbotManagement.Controllers
 
         public ActionResult Create()
         {
-            var intents = new IntentService().GetAll();
+            var intents = new IntentService().GetAllForCreatingDialog();
             return PartialView(intents);
         }
 
@@ -59,6 +59,15 @@ namespace FacebookChatbotManagement.Controllers
             {
                 return Json(new ResponseMessage() { Message = "Đã có lỗi xảy ra", Success = false });
             }
+        }
+
+        [HttpPost]
+        public JsonResult Delete(int id)
+        {
+            DialogService dialogService = new DialogService();
+            dialogService.Delete(id);
+            return Json(new ResponseMessage() { Message = "Đã tạo thành công", Success = true });
+
         }
     }
 }

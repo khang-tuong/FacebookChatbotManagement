@@ -38,6 +38,7 @@ namespace FacebookChatbotManagement.Controllers
                 {
                     Name = name,
                     Words = words,
+                    Active = true,
                 });
                 return Json(new ResponseMessage() { Message = "Đã tạo thành công", Success = true});
             }
@@ -53,6 +54,15 @@ namespace FacebookChatbotManagement.Controllers
             EntityService entityService = new EntityService();
             entityService.Update(id, name, words);
             return Json(new ResponseMessage() { Message = "Đã update thành công", Success = true });
+        }
+
+        [HttpPost]
+        public JsonResult Delete(int id)
+        {
+            EntityService entityService = new EntityService();
+            entityService.Delete(id);
+            return Json(new ResponseMessage() { Message = "Đã update thành công", Success = true });
+
         }
     }
 }

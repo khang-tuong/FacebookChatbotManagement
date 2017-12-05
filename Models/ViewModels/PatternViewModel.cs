@@ -12,5 +12,7 @@ namespace FacebookChatbotManagement.Models.ViewModels
         public bool MatchEnd { get; set; }
         public string Regex { get; set; }
         public string Name { get; set; }
+        public int IntentId { get; set; }
+        public int Group { get; set; }
     }
 }

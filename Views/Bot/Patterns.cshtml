@@ -27,7 +27,7 @@
                 <td>@pattern.MatchEnd</td>
                 <td>
                     <button class="btn btn-success" id="edit" onclick="edit(@pattern.Id)">Chỉnh sửa</button>
-                    <button class="btn btn-danger">Xóa</button>
+                    <button class="btn btn-danger" onclick="remove(@pattern.Id)">Xóa</button>
                 </td>
             </tr>
         }
@@ -66,6 +66,19 @@
             },
 
         })
+    };
+
+    function remove(id) {
+        let data = {
+            id,
+        };
+
+        $.ajax({
+            url: '@Url.Action("Delete", "Pattern")',
+            type: 'POST',
+            data: data,
+            success: (res) => { location.reload() },
+        });
     }
 
 </script>

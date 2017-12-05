@@ -16,9 +16,9 @@ namespace FacebookChatbotManagement.Models.Services
 
         public void Delete(int id)
         {
-            var entity = this.FirstOrDefault(q => q.Id == id);
-            this.DbSet.Patterns.Remove(entity);
-            this.DbSet.SaveChanges();
+            var pattern = this.FirstOrDefault(q => q.Id == id);
+            pattern.Active = false;
+            this.SaveChanges();
         }
 
         public List<PatternViewModel> GetAll()
@@ -32,7 +32,47 @@ namespace FacebookChatbotManagement.Models.Services
                     Id = q.Id,
                     MatchEnd = q.MatchEnd,
                     Name = q.Name,
-                    Regex = string.Join(" - ", q.PatternEntityMappings.Where(z => z.Active == true).OrderBy(z => z.Position).Select(z => z.Entity.Name).ToArray())
+                    Regex = string.Join(" - ", q.PatternEntityMappings.Where(z => z.Active == true).OrderBy(z => z.Position).Select(z => z.Entity.Name).ToArray()),
+                    IntentId = q.IntentId ?? 0,
+                    Group = q.Group ?? 0
+                })
+                .ToList();
+            return patterns;
+        }
+
+        public List<PatternViewModel> GetAllForCreating()
+        {
+            var patterns = this.DbSet.Patterns
+                .Where(q => q.Active == true && !q.IntentId.HasValue)
+                .ToList()
+                .Select(q => new PatternViewModel()
+                {
+                    MatchBegin = q.MatchBegin,
+                    Id = q.Id,
+                    MatchEnd = q.MatchEnd,
+                    Name = q.Name,
+                    Regex = string.Join(" - ", q.PatternEntityMappings.Where(z => z.Active == true).OrderBy(z => z.Position).Select(z => z.Entity.Name).ToArray()),
+                    IntentId = q.IntentId ?? 0,
+                    Group = q.Group ?? 0
+                })
+                .ToList();
+            return patterns;
+        }
+
+        public List<PatternViewModel> GetAllForEditingIntent(int intentId)
+        {
+            var patterns = this.DbSet.Patterns
+                .Where(q => (q.Active == true && (!q.IntentId.HasValue || q.IntentId.Value == intentId)) || q.Active == false)
+                .ToList()
+                .Select(q => new PatternViewModel()
+                {
+                    MatchBegin = q.MatchBegin,
+                    Id = q.Id,
+                    MatchEnd = q.MatchEnd,
+                    Name = q.Name,
+                    Regex = string.Join(" - ", q.PatternEntityMappings.Where(z => z.Active == true).OrderBy(z => z.Position).Select(z => z.Entity.Name).ToArray()),
+                    IntentId = q.IntentId ?? 0,
+                    Group = q.Group ?? 0
                 })
                 .ToList();
             return patterns;

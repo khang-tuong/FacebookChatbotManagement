@@ -21,7 +21,7 @@
                 <td>@dialog.Name</td>
                 <td>
                     <button class="btn btn-success" id="edit" onclick="edit(@dialog.Id)">Chỉnh sửa</button>
-                    <button class="btn btn-danger">Xóa</button>
+                    <button class="btn btn-danger" onclick="remove(@dialog.Id)">Xóa</button>
                 </td>
             </tr>
         }
@@ -60,6 +60,19 @@
             },
 
         })
+    }
+
+    function remove(id) {
+        let data = {
+            id,
+        };
+
+        $.ajax({
+            url: '@Url.Action("Delete", "Dialog")',
+            type: 'POST',
+            data: data,
+            success: (res) => location.reload(),
+        });
     }
 
 </script>

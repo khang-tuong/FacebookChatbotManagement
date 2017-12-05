@@ -79,5 +79,13 @@ namespace FacebookChatbotManagement.Controllers
                 return Json(new ResponseMessage() { Message = "Đã có lỗi xảy ra", Success = false });
             }
         }
+
+        [HttpPost]
+        public JsonResult Delete(int id)
+        {
+            PatternService patternService = new PatternService();
+            patternService.Delete(id);
+            return Json(new ResponseMessage() { Message = "Đã tạo thành công", Success = true });
+        }
     }
 }

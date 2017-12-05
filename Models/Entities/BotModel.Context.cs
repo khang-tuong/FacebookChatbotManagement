@@ -26,12 +26,10 @@ namespace FacebookChatbotManagement.Models.Entities
         }
     
         public virtual DbSet<Dialog> Dialogs { get; set; }
-        public virtual DbSet<DialogIntentMapping> DialogIntentMappings { get; set; }
         public virtual DbSet<DialogStep> DialogSteps { get; set; }
         public virtual DbSet<Entity> Entities { get; set; }
         public virtual DbSet<Intent> Intents { get; set; }
-        public virtual DbSet<IntentPatternMapping> IntentPatternMappings { get; set; }
-        public virtual DbSet<PatternEntityMapping> PatternEntityMappings { get; set; }
         public virtual DbSet<Pattern> Patterns { get; set; }
+        public virtual DbSet<PatternEntityMapping> PatternEntityMappings { get; set; }
     }
 }

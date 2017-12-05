@@ -17,7 +17,6 @@ namespace FacebookChatbotManagement.Models.Entities
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Pattern()
         {
-            this.IntentPatternMappings = new HashSet<IntentPatternMapping>();
             this.PatternEntityMappings = new HashSet<PatternEntityMapping>();
         }
     
@@ -26,9 +25,10 @@ namespace FacebookChatbotManagement.Models.Entities
         public bool MatchBegin { get; set; }
         public bool MatchEnd { get; set; }
         public bool Active { get; set; }
+        public Nullable<int> IntentId { get; set; }
+        public Nullable<int> Group { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<IntentPatternMapping> IntentPatternMappings { get; set; }
+        public virtual Intent Intent { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PatternEntityMapping> PatternEntityMappings { get; set; }
     }
