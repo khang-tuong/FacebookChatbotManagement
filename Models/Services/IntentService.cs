@@ -166,6 +166,15 @@ namespace FacebookChatbotManagement.Models.Services
             var intent = this.FirstOrDefault(q => q.Id == intentId);
             if (intent != null) {
                 intent.Active = false;
+                PatternService patternService = new PatternService();
+                var patterns = patternService.Get(q => q.Active == true && q.IntentId == intentId).ToList();
+                foreach (var pattern in patterns)
+                {
+                    pattern.IntentId = null;
+                    pattern.Group = -1;
+                }
+
+                patternService.SaveChanges();
                 this.SaveChanges();
             }
         }

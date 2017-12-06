@@ -49,11 +49,15 @@ namespace FacebookChatbotManagement.Models.Services
 
                 IntentService intentService = new IntentService();
 
+                int i = 0;
                 foreach (var intentId in model.IntentIds)
                 {
                     Intent intent = intentService.FirstOrDefault(q => q.Id == intentId);
                     intent.DialogId = dialog.Id;
                     intent.Active = true;
+                    intent.Step = model.Steps[i];
+                    intent.Exception = model.Exceptions[i];
+                    ++i;
                 }
 
                 intentService.SaveChanges();
@@ -116,6 +120,16 @@ namespace FacebookChatbotManagement.Models.Services
             if (dialog != null)
             {
                 dialog.Active = false;
+                IntentService intentService = new IntentService();
+                var intents = intentService.Get(q => q.Active == true && q.DialogId == dialogId).ToList();
+                foreach (var intent in intents)
+                {
+                    intent.DialogId = null;
+                    intent.Step = -1;
+                    intent.Exception = -1;
+                }
+
+                intentService.SaveChanges();
                 this.SaveChanges();
             }
         }

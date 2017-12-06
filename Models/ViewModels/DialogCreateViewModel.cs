@@ -9,7 +9,7 @@ namespace FacebookChatbotManagement.Models.ViewModels
     {
         public string Name { get; set; }
         public int[] IntentIds { get; set; }
-        public int[] Steps { get; set; }
-        public int[] Exceptions { get; set; }
+        public double[] Steps { get; set; }
+        public double[] Exceptions { get; set; }
     }
 }
