@@ -43,7 +43,7 @@ namespace FacebookChatbotManagement.Models.Services
         public List<PatternViewModel> GetAllForCreating()
         {
             var patterns = this.DbSet.Patterns
-                .Where(q => q.Active == true && !q.IntentId.HasValue)
+                .Where(q => (q.Active == true && !q.IntentId.HasValue) || q.Active == false)
                 .ToList()
                 .Select(q => new PatternViewModel()
                 {

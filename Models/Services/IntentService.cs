@@ -60,10 +60,13 @@ namespace FacebookChatbotManagement.Models.Services
 
             PatternService patternService = new PatternService();
 
+            int i = 0;
             foreach (var patternId in patterns)
             {
                 var pattern = patternService.FirstOrDefault(q => q.Id == patternId && q.Active == true);
+                pattern.Group = groups[i];
                 pattern.IntentId = intent.Id;
+                ++i;
             }
             patternService.SaveChanges();
 

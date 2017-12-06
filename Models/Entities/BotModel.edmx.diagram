@@ -8,14 +8,14 @@
         <EntityTypeShape EntityType="ChatbotModel.Dialog" Width="1.5" PointX="0.75" PointY="1.5" />
         <EntityTypeShape EntityType="ChatbotModel.DialogStep" Width="1.5" PointX="0.75" PointY="4.75" />
         <EntityTypeShape EntityType="ChatbotModel.Entity" Width="1.5" PointX="5.25" PointY="5.375" />
-        <EntityTypeShape EntityType="ChatbotModel.Intent" Width="1.5" PointX="3" PointY="1" />
-        <EntityTypeShape EntityType="ChatbotModel.Pattern" Width="1.5" PointX="5.25" PointY="1" />
         <EntityTypeShape EntityType="ChatbotModel.PatternEntityMapping" Width="1.5" PointX="7.5" PointY="1.125" />
-        <AssociationConnector Association="ChatbotModel.FK_Intent_Dialog" />
         <AssociationConnector Association="ChatbotModel.FK_PatternEntityMapping_Entity" />
+        <EntityTypeShape EntityType="ChatbotModel.Intent" Width="1.5" PointX="3" PointY="1.125" />
+        <EntityTypeShape EntityType="ChatbotModel.Pattern" Width="1.5" PointX="5.25" PointY="1" />
+        <AssociationConnector Association="ChatbotModel.FK_Intent_Dialog" />
         <AssociationConnector Association="ChatbotModel.FK_Pattern_Intent" />
         <AssociationConnector Association="ChatbotModel.FK_PatternEntityMapping_Pattern" />
-      </Diagram>
+        </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
 </edmx:Edmx>

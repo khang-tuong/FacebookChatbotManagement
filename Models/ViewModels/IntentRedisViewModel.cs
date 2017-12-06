@@ -10,8 +10,8 @@ namespace FacebookChatbotManagement.Models.ViewModels
         public int Id { get; set; }
         public List<PatternRedisViewModel> Patterns { get; set; }
         public int DialogId { get; set; }
-        public int Step { get; set; }
-        public int Exception { get; set; }
+        public double Step { get; set; }
+        public double Exception { get; set; }
     }
 
     public class PatternRedisViewModel

@@ -18,7 +18,7 @@ namespace FacebookChatbotManagement.Models.Services
             PatternService patternService = new PatternService();
             List<Pattern> patterns = patternService.Get(q => q.Active == true).ToList();
 
-            int maxElements = 0;
+            int maxElements = -1;
             Pattern matchPattern = null;
             Dictionary<string, string> matches = null;
             string specialValues = ""; //when the entity simply just want some words
@@ -49,7 +49,16 @@ namespace FacebookChatbotManagement.Models.Services
                         }
                         else if (specialValues == "")
                         {
-                            regex = new Regex(@"(?:^|\W)^(" + pems[i].Entity.Words + @")(?:$|\W)", RegexOptions.IgnoreCase);
+                            if (i == 0)
+                            {
+                                if (pattern.MatchBegin)
+                                    regex = new Regex(@"(?:^|\W)^(" + pems[i].Entity.Words + @")(?:$|\W)", RegexOptions.IgnoreCase);
+                                else
+                                    regex = new Regex(@"(?:^|\W)(" + pems[i].Entity.Words + @")(?:$|\W)", RegexOptions.IgnoreCase);
+                            } else
+                            {
+                                regex = new Regex(@"(?:^|\W)^(" + pems[i].Entity.Words + @")(?:$|\W)", RegexOptions.IgnoreCase);
+                            }
                         }
                         else
                         {
@@ -90,7 +99,7 @@ namespace FacebookChatbotManagement.Models.Services
                             {
                                 if (result.Index + result.Value.Trim().Length + 1 < inputTmp.Length)
                                 {
-                                    inputTmp = inputTmp.Substring(result.Index + result.Value.Trim().Length + 1);
+                                    inputTmp = inputTmp.Substring(result.Index + result.Value.Trim().Length + 1).Trim();
                                 }
                             }
                         }

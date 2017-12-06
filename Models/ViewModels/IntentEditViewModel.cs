@@ -9,12 +9,12 @@ namespace FacebookChatbotManagement.Models.ViewModels
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public Dictionary<int, int> SelectedPatterns { get; set; }
+        public Dictionary<int, double> SelectedPatterns { get; set; }
         public List<PatternViewModel> AllPatterns { get; set; }
 
         public IntentEditViewModel()
         {
-            this.SelectedPatterns = new Dictionary<int, int>();
+            this.SelectedPatterns = new Dictionary<int, double>();
             this.AllPatterns = new List<PatternViewModel>();
         }
     }

@@ -40,8 +40,8 @@
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="Active" Type="bit" Nullable="false" />
-          <Property Name="Step" Type="int" />
-          <Property Name="Exception" Type="int" />
+          <Property Name="Step" Type="float" />
+          <Property Name="Exception" Type="float" />
           <Property Name="DialogId" Type="int" />
         </EntityType>
         <EntityType Name="Pattern">
@@ -146,16 +146,16 @@
           <EntitySet Name="Dialogs" EntityType="ChatbotModel.Dialog" />
           <EntitySet Name="DialogSteps" EntityType="ChatbotModel.DialogStep" />
           <EntitySet Name="Entities" EntityType="ChatbotModel.Entity" />
-          <EntitySet Name="Intents" EntityType="ChatbotModel.Intent" />
-          <EntitySet Name="Patterns" EntityType="ChatbotModel.Pattern" />
           <EntitySet Name="PatternEntityMappings" EntityType="ChatbotModel.PatternEntityMapping" />
-          <AssociationSet Name="FK_Intent_Dialog" Association="ChatbotModel.FK_Intent_Dialog">
-            <End Role="Dialog" EntitySet="Dialogs" />
-            <End Role="Intent" EntitySet="Intents" />
-          </AssociationSet>
           <AssociationSet Name="FK_PatternEntityMapping_Entity" Association="ChatbotModel.FK_PatternEntityMapping_Entity">
             <End Role="Entity" EntitySet="Entities" />
             <End Role="PatternEntityMapping" EntitySet="PatternEntityMappings" />
+          </AssociationSet>
+          <EntitySet Name="Intents" EntityType="ChatbotModel.Intent" />
+          <EntitySet Name="Patterns" EntityType="ChatbotModel.Pattern" />
+          <AssociationSet Name="FK_Intent_Dialog" Association="ChatbotModel.FK_Intent_Dialog">
+            <End Role="Dialog" EntitySet="Dialogs" />
+            <End Role="Intent" EntitySet="Intents" />
           </AssociationSet>
           <AssociationSet Name="FK_Pattern_Intent" Association="ChatbotModel.FK_Pattern_Intent">
             <End Role="Intent" EntitySet="Intents" />
@@ -165,7 +165,7 @@
             <End Role="Pattern" EntitySet="Patterns" />
             <End Role="PatternEntityMapping" EntitySet="PatternEntityMappings" />
           </AssociationSet>
-        </EntityContainer>
+          </EntityContainer>
         <EntityType Name="Dialog">
           <Key>
             <PropertyRef Name="Id" />
@@ -196,6 +196,30 @@
           <Property Name="Active" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="PatternEntityMappings" Relationship="ChatbotModel.FK_PatternEntityMapping_Entity" FromRole="Entity" ToRole="PatternEntityMapping" />
         </EntityType>
+        <EntityType Name="PatternEntityMapping">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PatternId" Type="Int32" Nullable="false" />
+          <Property Name="EntityId" Type="Int32" />
+          <Property Name="Position" Type="Int32" Nullable="false" />
+          <Property Name="Active" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Entity" Relationship="ChatbotModel.FK_PatternEntityMapping_Entity" FromRole="PatternEntityMapping" ToRole="Entity" />
+          <NavigationProperty Name="Pattern" Relationship="ChatbotModel.FK_PatternEntityMapping_Pattern" FromRole="PatternEntityMapping" ToRole="Pattern" />
+        </EntityType>
+        <Association Name="FK_PatternEntityMapping_Entity">
+          <End Type="ChatbotModel.Entity" Role="Entity" Multiplicity="0..1" />
+          <End Type="ChatbotModel.PatternEntityMapping" Role="PatternEntityMapping" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Entity">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PatternEntityMapping">
+              <PropertyRef Name="EntityId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityType Name="Intent">
           <Key>
             <PropertyRef Name="Id" />
@@ -203,8 +227,8 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="Active" Type="Boolean" Nullable="false" />
-          <Property Name="Step" Type="Int32" />
-          <Property Name="Exception" Type="Int32" />
+          <Property Name="Step" Type="Double" />
+          <Property Name="Exception" Type="Double" />
           <Property Name="DialogId" Type="Int32" />
           <NavigationProperty Name="Dialog" Relationship="ChatbotModel.FK_Intent_Dialog" FromRole="Intent" ToRole="Dialog" />
           <NavigationProperty Name="Patterns" Relationship="ChatbotModel.FK_Pattern_Intent" FromRole="Intent" ToRole="Pattern" />
@@ -223,18 +247,6 @@
           <NavigationProperty Name="Intent" Relationship="ChatbotModel.FK_Pattern_Intent" FromRole="Pattern" ToRole="Intent" />
           <NavigationProperty Name="PatternEntityMappings" Relationship="ChatbotModel.FK_PatternEntityMapping_Pattern" FromRole="Pattern" ToRole="PatternEntityMapping" />
         </EntityType>
-        <EntityType Name="PatternEntityMapping">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="PatternId" Type="Int32" Nullable="false" />
-          <Property Name="EntityId" Type="Int32" />
-          <Property Name="Position" Type="Int32" Nullable="false" />
-          <Property Name="Active" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="Entity" Relationship="ChatbotModel.FK_PatternEntityMapping_Entity" FromRole="PatternEntityMapping" ToRole="Entity" />
-          <NavigationProperty Name="Pattern" Relationship="ChatbotModel.FK_PatternEntityMapping_Pattern" FromRole="PatternEntityMapping" ToRole="Pattern" />
-        </EntityType>
         <Association Name="FK_Intent_Dialog">
           <End Type="ChatbotModel.Dialog" Role="Dialog" Multiplicity="0..1" />
           <End Type="ChatbotModel.Intent" Role="Intent" Multiplicity="*" />
@@ -244,18 +256,6 @@
             </Principal>
             <Dependent Role="Intent">
               <PropertyRef Name="DialogId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_PatternEntityMapping_Entity">
-          <End Type="ChatbotModel.Entity" Role="Entity" Multiplicity="0..1" />
-          <End Type="ChatbotModel.PatternEntityMapping" Role="PatternEntityMapping" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Entity">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="PatternEntityMapping">
-              <PropertyRef Name="EntityId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -320,6 +320,17 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="PatternEntityMappings">
+            <EntityTypeMapping TypeName="ChatbotModel.PatternEntityMapping">
+              <MappingFragment StoreEntitySet="PatternEntityMapping">
+                <ScalarProperty Name="Active" ColumnName="Active" />
+                <ScalarProperty Name="Position" ColumnName="Position" />
+                <ScalarProperty Name="EntityId" ColumnName="EntityId" />
+                <ScalarProperty Name="PatternId" ColumnName="PatternId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="Intents">
             <EntityTypeMapping TypeName="ChatbotModel.Intent">
               <MappingFragment StoreEntitySet="Intent">
@@ -341,17 +352,6 @@
                 <ScalarProperty Name="MatchEnd" ColumnName="MatchEnd" />
                 <ScalarProperty Name="MatchBegin" ColumnName="MatchBegin" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="PatternEntityMappings">
-            <EntityTypeMapping TypeName="ChatbotModel.PatternEntityMapping">
-              <MappingFragment StoreEntitySet="PatternEntityMapping">
-                <ScalarProperty Name="Active" ColumnName="Active" />
-                <ScalarProperty Name="Position" ColumnName="Position" />
-                <ScalarProperty Name="EntityId" ColumnName="EntityId" />
-                <ScalarProperty Name="PatternId" ColumnName="PatternId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

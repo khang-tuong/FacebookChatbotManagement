@@ -10,15 +10,15 @@ namespace FacebookChatbotManagement.Models.ViewModels
         public int Id { get; set; }
         public string Name { get; set; }
         public List<IntentViewModel> SelectedIntents { get; set; }
-        public List<int> Steps { get; set; }
-        public List<int> Exceptions { get; set; }
+        public List<double> Steps { get; set; }
+        public List<double> Exceptions { get; set; }
         public List<IntentViewModel> AllIntents { get; set; }
 
         public DialogEditViewModel()
         {
             this.SelectedIntents = new List<IntentViewModel>();
-            this.Steps = new List<int>();
-            this.Exceptions = new List<int>();
+            this.Steps = new List<double>();
+            this.Exceptions = new List<double>();
             this.AllIntents = new List<IntentViewModel>();
         }
     }
@@ -27,7 +27,7 @@ namespace FacebookChatbotManagement.Models.ViewModels
         public int Id { get; set; }
         public string Name { get; set; }
         public int[] IntentIds { get; set; }
-        public int[] Steps { get; set; }
+        public double[] Steps { get; set; }
         public int[] Exceptions { get; set; }
     }
 }

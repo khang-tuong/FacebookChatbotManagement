@@ -23,8 +23,8 @@ namespace FacebookChatbotManagement.Models.Entities
         public int Id { get; set; }
         public string Name { get; set; }
         public bool Active { get; set; }
-        public Nullable<int> Step { get; set; }
-        public Nullable<int> Exception { get; set; }
+        public Nullable<double> Step { get; set; }
+        public Nullable<double> Exception { get; set; }
         public Nullable<int> DialogId { get; set; }
     
         public virtual Dialog Dialog { get; set; }

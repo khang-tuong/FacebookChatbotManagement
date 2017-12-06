@@ -8,7 +8,7 @@ namespace FacebookChatbotManagement.Models.ViewModels
     public class ExperimentResultViewModel
     {
         public int IntentId { get; set; }
-        public int Group { get; set; }
+        public double Group { get; set; }
         public Dictionary<string, string> Matches { get; set; }
     }
 }
